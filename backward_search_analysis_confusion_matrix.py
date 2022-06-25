@@ -1,0 +1,100 @@
+"""This code retain columns of index 2 and 3 then performs classification using DTC and RFC to find confusion matrix."""
+
+import numpy as np
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from datetime import datetime
+
+# Record start time
+start_time = datetime.now()
+
+# Load training data, extract the machine failed labels (last column), and delete the column from the original data
+train_data = np.loadtxt("dataset\\ai4i2020_train_data.csv", delimiter=",")
+train_data_labels = train_data[:, 6]
+train_data = np.delete(train_data, 6, axis=1)
+
+# Load testing data, extract the machine failed labels (last column), and delete the column from the original data
+test_data = np.loadtxt("dataset\\ai4i2020_test_data.csv", delimiter=",")
+test_data_labels = test_data[:, 6]
+test_data = np.delete(test_data, 6, axis=1)
+
+# Calculate number of features
+attributes = np.shape(train_data)[1]  # 6
+
+# Variable to store confusion matrix errors
+# Class A = Machine fails = 1
+# Class B = Machine does NOT fail = 0
+dtc_confusion_matrix = np.empty(shape=(2, 2))
+dtc_confusion_matrix_percentage = np.empty(shape=(2, 2))
+rfc_confusion_matrix = np.empty(shape=(2, 2))
+rfc_confusion_matrix_percentage = np.empty(shape=(2, 2))
+
+# Create instances of classifiers
+clf_dtc = DecisionTreeClassifier()
+clf_rfc = RandomForestClassifier()
+
+# --- Decision Tree Classification and Random Forest Classification using backward search begins ---
+# Remove the dimensions from the data and retain columns of index 2 and 3 only
+train_data_reduced = np.delete(train_data, obj=[0, 1, 3, 5], axis=1)
+test_data_reduced = np.delete(test_data, obj=[0, 1, 3, 5], axis=1)
+
+# Decision Tree Classification and Random Forest Classification on the reduced data
+dtc_train_start_time = datetime.now()
+clf_dtc.fit(train_data_reduced, train_data_labels)  # Training of the model
+dtc_train_time = datetime.now() - dtc_train_start_time
+dtc_test_start_time = datetime.now()
+dtc_prediction = clf_dtc.predict(test_data_reduced)  # Testing of the model
+dtc_test_time = datetime.now() - dtc_test_start_time
+
+rfc_train_start_time = datetime.now()
+clf_rfc.fit(train_data_reduced, train_data_labels)  # Training of the model
+rfc_train_time = datetime.now() - rfc_train_start_time
+rfc_test_start_time = datetime.now()
+rfc_prediction = clf_rfc.predict(test_data_reduced)  # Testing of the model
+rfc_test_time = datetime.now() - rfc_test_start_time
+
+for i in range (2):
+    for j in range(2):
+        dtc_confusion_matrix[i][j] = sum(np.logical_and(dtc_prediction == i, test_data_labels == j))
+        rfc_confusion_matrix[i][j] = sum(np.logical_and(rfc_prediction == i, test_data_labels == j))
+
+        if j == 0:
+            dtc_confusion_matrix_percentage[i][j] = (dtc_confusion_matrix[i][j] / 2428)*100
+            rfc_confusion_matrix_percentage[i][j] = (rfc_confusion_matrix[i][j] / 2428) * 100
+
+        else:
+            dtc_confusion_matrix_percentage[i][j] = (dtc_confusion_matrix[i][j] / 72) * 100
+            rfc_confusion_matrix_percentage[i][j] = (rfc_confusion_matrix[i][j] / 72) * 100
+
+# Print confusion matrices and accuracies
+"""
+Class B True -ve    Class A False -ve
+Class B False -ve   Class A True +ve
+"""
+
+print("Decision Tree Classification Confusion Matrix:")
+print(dtc_confusion_matrix)
+
+print("\nDecision Tree Classification Confusion Matrix in percentages:")
+print(dtc_confusion_matrix_percentage)
+
+print("\nRandom Forest Classification Confusion Matrix:")
+print(rfc_confusion_matrix)
+
+print("\nRandom Forest Classification Confusion Matrix in percentages:")
+print(rfc_confusion_matrix_percentage)
+
+print(f"\nDecision Tree Classification Accuracy: "
+      f"{((sum(dtc_prediction == test_data_labels))/len(test_data_labels))*100}%")
+print(f"Random Forest Classification Accuracy: "
+      f"{((sum(rfc_prediction == test_data_labels))/len(test_data_labels))*100}%")
+
+# Record end time and show total run time
+print(f"\nProgram completed in {(datetime.now() - start_time).seconds}."
+      f"{(datetime.now() - start_time).microseconds} seconds.")
+
+print(f"\nDecision Tree Classification training time: {dtc_train_time.seconds}.{dtc_train_time.microseconds} seconds")
+print(f"Decision Tree Classification testing time: {dtc_test_time.seconds}.{dtc_test_time.microseconds} seconds")
+
+print(f"\nRandom Forest Classification training time: {rfc_train_time.seconds}.{rfc_train_time.microseconds} seconds")
+print(f"Random Forest Classification testing time: {rfc_test_time.seconds}.{rfc_test_time.microseconds} seconds")
