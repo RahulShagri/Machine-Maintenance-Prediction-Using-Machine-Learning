@@ -18,7 +18,7 @@ AI4I (Artificial intelligence for Industry) 2020 Predictive Maintenance using De
 * The dataset was split into training and testing dataset using sklearn's "train_test_split" module.
   * Total number of datapoints = 10,000
   * Number of datapoints for Training (75%) = 7,500
-  *Number of datapoints for Testing (25%) = 2,500
+  * Number of datapoints for Testing (25%) = 2,500
 
 <h1>Principal Component Analysis Results</h1>
 
