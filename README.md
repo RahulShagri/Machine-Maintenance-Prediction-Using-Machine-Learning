@@ -30,7 +30,7 @@ AI4I (Artificial intelligence for Industry) 2020 Predictive Maintenance using De
 * From Figure 2, we notice a sharp increase in classification errors for both Decision Tree Classification and Random Forest Classification when 3 or less dimensions are retained. The optimal number of dimensions seems to be 4.
 * In Conclusion, 2 dimensions were selected, and DTC and RFC were performed for classifying Machine Failures and measure errors in a confusion matrix.
 
-<h1>Backward Search Analysis</h1>
+<h1>Backward Search Analysis Results</h1>
 
 * Backward search analysis was performed manually to iterate through the training dataset and classifying after removing 1, 2, 3, 4, and 5 dimensions by searching for the dimension which leads to minimum classification error.
 
