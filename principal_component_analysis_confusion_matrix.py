@@ -6,6 +6,7 @@ the errors in a confusion matrix."""
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.utils import shuffle
 from datetime import datetime
 
 # Record start time
@@ -13,6 +14,7 @@ start_time = datetime.now()
 
 # Load training data, extract the machine failed labels (last column), and delete the column from the original data
 train_data = np.loadtxt("dataset\\ai4i2020_train_data.csv", delimiter=",")
+train_data = shuffle(train_data, random_state=42)  # Randomize the data
 train_data_labels = train_data[:, 6]
 train_data = np.delete(train_data, 6, axis=1)
 
@@ -93,8 +95,8 @@ for i in range (2):
 
 # Print confusion matrices and accuracies
 """
-Class B True -ve    Class B False +ve
-Class A False -ve   Class A True +ve
+Class B True -ve    Class A True +ve
+Class B False -ve   Class A False +ve
 """
 
 print("Decision Tree Classification Confusion Matrix:")
